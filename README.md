@@ -137,3 +137,17 @@ Remove-Item Env:VITE_BASE_PATH
 On POSIX shells, use `export VITE_BASE_PATH=/noised-web/` and unset it afterward.
 Keep the same base path for build, browser check and preview. Logo, starfields,
 JS, CSS, WASM and AudioWorklet URLs respect the configured path.
+
+
+## Manual Open Graph preview
+
+Install/link the local CLI once from `C:\Code\og-capture` (`npm ci`, `npm run build`, `npm run browser:install`, `npm link`). Its README documents configuration and troubleshooting. No CLI dependency is added to this app.
+
+```powershell
+npm run og:preview
+npm run og:generate
+```
+
+Run these commands from the **noised-web workspace root**. `/?og=1` uses the actual demo, default preset, shared controller, WASM/worklet engine, and `noised-ui` visualization. Playwright clicks Play Storm and waits for running audio, nonzero analyser samples, and rendered canvas frames. Only the capture layout changes. Audio and the exact waveform remain naturally variable.
+
+Generation writes `storm/demo/public/storm.png` (1200 × 630). Review and explicitly add the PNG and source changes to Git. It ships as a public static asset in the existing deployment; generation never runs during dev, build, CI, or deployment. Preview opens a visible browser; close its window or press Ctrl+C to clean up. Existing servers are reused and left running. If Web Audio needs a visible browser, set `browser.headed` to `true` and `browser.channel` to `"chrome"` in `og.config.json` (installed Chrome is already configured for visible previews on this machine).

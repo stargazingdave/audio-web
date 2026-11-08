@@ -20,7 +20,9 @@
     "test:ui": "node scripts/ui-smoke.mjs",
     "test:package": "node scripts/package-smoke.mjs",
     "dev:ui": "npm run dev --workspace=noised-ui",
-    "pack:ui": "npm pack --workspace=noised-ui --pack-destination=artifacts"
+    "pack:ui": "npm pack --workspace=noised-ui --pack-destination=artifacts",
+    "og:generate": "og-capture generate --config og.config.json",
+    "og:preview": "og-capture preview --config og.config.json"
   },
   "engines": {
     "node": ">=22.12.0"

@@ -250,3 +250,9 @@ select option { background: var(--popover); color: var(--foreground); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Capture-only composition; production layout and audio defaults are unchanged. */
+.demo-shell.og-preview { width: 1200px; max-width: none; height: 630px; margin: 0; padding: 20px 36px; box-sizing: border-box; overflow: hidden; }
+.og-preview .demo-navbar { margin-bottom: 16px; }
+.og-preview .demo-footer { margin-top: 14px; }
+.og-preview main { zoom: 0.60; }
