@@ -196,3 +196,39 @@ for explicit imports. Watch mode rebuilds when the CSS changes.
 Run `npm run test:package` from the root to verify production bundling in a
 separate consumer without a CSS import, ESM/CommonJS and both declaration
 formats, automatic styles, host overrides, interactions and server rendering.
+
+## Instrument and application components
+
+The library also exports these controlled, audio-engine-independent components.
+They use the same automatic styles and SSR-safe entries as the existing controls.
+
+- `PitchMeter`: `cents: number | null`, optional `active`, `tolerance` (3),
+  `range` (50), `label`, and `className`. Accessible SVG cents gauge. Out-of-range
+  display is clamped; the supplied measurement is never changed or snapped.
+- `NoteSelector`: `notes: {id, name, octave, detail?}[]`, `value: string | null`,
+  `onChange(id | null)`, and optional `detected`, `label`, `className`.
+  Tapping the selected target returns null, allowing automatic mode.
+- `LevelMeter`: normalized `level` (0–1), optional `label` and `className`.
+- `SegmentedControl`: generic string `value`, `options: {value, label}[]`,
+  `onChange`, accessible `label`, optional `disabled` and `className`.
+- `SelectField`: labeled native select; accepts select attributes, option children,
+  and optional `hint`. Generates a unique label/control association.
+- `Button`: native button props and optional `variant`:
+  `primary`, `secondary`, or `ghost`. Defaults to `type="button"`.
+- `StatusIndicator`: children plus optional `tone`:
+  `neutral`, `active`, or `warning`.
+- `AudioIcon`: decorative icon with `name`:
+  `microphone`, `stop`, `play`, `check`, `arrow`, `settings`, or `headphones`.
+
+Theme with inherited CSS variables: `--noised-ink`, `--noised-on-ink`,
+`--noised-accent`, `--noised-accent-soft`, `--noised-surface`,
+`--noised-border`, `--noised-control-bg`, and `--noised-focus-color`.
+No global reset or app-specific layout is installed.
+
+```tsx
+import { PitchMeter, NoteSelector } from 'noised-ui';
+<PitchMeter cents={reading ? reading.cents : null} active={isVoiced} />
+<NoteSelector notes={[{ id: '40', name: 'E', octave: 2, detail: '6' }]}
+  value={target} onChange={setTarget} />
+```
+

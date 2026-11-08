@@ -134,3 +134,52 @@
 @media (prefers-reduced-motion: reduce) {
   .noised-switch__button, .noised-switch__lever { transition: none; }
 }
+
+/* Reusable instrument and application controls. Theme through inherited variables. */
+:where(.noised-button, .noised-segments, .noised-field, .noised-status, .noised-level, .noised-notes, .noised-pitch-meter),
+:where(.noised-button, .noised-segments, .noised-field, .noised-status, .noised-level, .noised-notes, .noised-pitch-meter) * { box-sizing: border-box; }
+.noised-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 11px 18px; border: 1px solid transparent; border-radius: 9px; font: inherit; font-weight: 550; font-size: 14px; cursor: pointer; transition: background .15s, opacity .15s; }
+.noised-button--primary { background: var(--noised-ink, #213a32); color: var(--noised-on-ink, #fff); }
+.noised-button--primary:hover { opacity: .9; }
+.noised-button--secondary { color: inherit; background: var(--noised-control-bg, #eeeee7); border-color: var(--noised-border, #deded5); }
+.noised-button--ghost { color: inherit; background: transparent; }
+.noised-button--ghost:hover { background: var(--noised-control-bg, #eeeee7); }
+.noised-button:disabled { opacity: .5; cursor: wait; }
+:where(.noised-button, .noised-segments button, .noised-notes button, .noised-field select):focus-visible { outline: 2px solid var(--noised-focus-color, #368168); outline-offset: 4px; }
+.noised-segments { display: inline-flex; gap: 3px; padding: 4px; border: 1px solid var(--noised-border, #e3e3da); background: var(--noised-control-bg, #f0f0e9); border-radius: 9px; }
+.noised-segments button { min-height: 34px; padding: 6px 14px; border: 0; border-radius: 6px; background: transparent; color: inherit; opacity: .6; font: inherit; font-size: 12px; cursor: pointer; }
+.noised-segments button[aria-pressed=true] { background: var(--noised-surface, #fff); box-shadow: 0 1px 3px #0000000c; opacity: 1; }
+.noised-segments button:disabled { cursor: default; }
+.noised-field { min-width: 0; display: grid; gap: 9px; }
+.noised-field label { font-size: 11px; letter-spacing: .03em; opacity: .65; }
+.noised-field select { min-height: 44px; width: 100%; min-width: 0; padding: 10px 30px 10px 13px; background: var(--noised-surface, #fff); color: inherit; border: 1px solid var(--noised-border, #deded5); border-radius: 7px; font: inherit; font-size: 13px; }
+.noised-field > span { font-size: 12px; opacity: .6; }
+.noised-status { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; white-space: nowrap; }
+.noised-status__dot { width: 6px; height: 6px; border-radius: 50%; background: #a3a79d; }
+.noised-status[data-tone=active] .noised-status__dot { background: var(--noised-accent, #2b785c); box-shadow: 0 0 0 4px #2b785c0e; }
+.noised-status[data-tone=warning] .noised-status__dot { background: #b77b35; }
+.noised-level { display: flex; gap: 3px; align-items: center; height: 15px; }
+.noised-level > span { display: block; height: 7px; width: 3px; border-radius: 1px; background: var(--noised-border, #e3e3da); }
+.noised-level > span[data-lit] { background: var(--noised-accent, #2b785c); }
+.noised-notes { display: flex; gap: 8px; width: 100%; }
+.noised-notes button { position: relative; display: flex; flex: 1 1 0; min-width: 0; align-items: center; flex-direction: column; gap: 8px; padding: 13px 4px 11px; border-radius: 8px; border: 1px solid var(--noised-border, #e2e3d9); background: transparent; color: inherit; cursor: pointer; font: inherit; transition: background .15s, border-color .15s; }
+.noised-notes button:hover { background: var(--noised-control-bg, #f0f0e9); }
+.noised-notes button[aria-pressed=true] { border-color: var(--noised-accent, #2b785c); background: var(--noised-accent-soft, #edf3e8); }
+.noised-notes button[data-detected] .noised-notes__mark { background: var(--noised-accent, #2b785c); }
+.noised-notes__detail { font-size: 9px; opacity: .45; font-variant-numeric: tabular-nums; }
+.noised-notes__name { font-size: 21px; font-weight: 500; line-height: 1; }
+.noised-notes sub { font-size: 10px; margin-left: 1px; }
+.noised-notes__mark { height: 3px; width: 12px; border-radius: 2px; margin-top: 1px; background: var(--noised-border, #deded5); }
+.noised-pitch-meter { --meter-color: var(--noised-accent, #2b785c); width: 100%; }
+.noised-pitch-meter svg { display: block; width: 100%; overflow: visible; }
+.noised-pitch-meter__track { fill: none; stroke: var(--noised-border, #d9dccf); stroke-width: 2; }
+.noised-pitch-meter__zone { fill: none; stroke: var(--meter-color); stroke-width: 5; stroke-linecap: round; }
+.noised-pitch-meter__tick { stroke: currentColor; stroke-width: 1; opacity: .26; }
+.noised-pitch-meter text { font-family: inherit; font-size: 10px; fill: currentColor; opacity: .55; }
+.noised-pitch-meter__center { fill: var(--meter-color); }
+.noised-pitch-meter__needle line { stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.noised-pitch-meter__needle circle { fill: currentColor; }
+.noised-pitch-meter[data-in-tune] .noised-pitch-meter__needle { color: var(--meter-color); }
+.noised-pitch-meter .noised-pitch-meter__direction { font-size: 9px; letter-spacing: 2px; opacity: .42; }
+@media (prefers-reduced-motion: reduce) { .noised-button, .noised-notes button { transition: none; } }
+

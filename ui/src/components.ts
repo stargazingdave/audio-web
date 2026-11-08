@@ -3,3 +3,11 @@ export { Equalizer, type EqualizerProps, type EqualizerColors } from './equalize
 export { AmpToggleSwitch, type AmpToggleSwitchProps } from './amp-toggle-switch';
 export type { ControlDensity } from './types';
 export { Visualization, type VisualizationProps, type VisualizationType, type VisualizationStyle } from './visualization';
+export { Button, type ButtonProps } from './button';
+export { SegmentedControl, type SegmentedControlProps, type SegmentOption } from './segmented-control';
+export { SelectField, type SelectFieldProps } from './select-field';
+export { StatusIndicator, type StatusIndicatorProps } from './status-indicator';
+export { LevelMeter, type LevelMeterProps } from './level-meter';
+export { NoteSelector, type NoteSelectorProps, type NoteOption } from './note-selector';
+export { PitchMeter, type PitchMeterProps } from './pitch-meter';
+export { AudioIcon, type AudioIconProps, type AudioIconName } from './audio-icon';
