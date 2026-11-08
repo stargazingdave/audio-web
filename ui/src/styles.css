@@ -183,3 +183,27 @@
 .noised-pitch-meter .noised-pitch-meter__direction { font-size: 9px; letter-spacing: 2px; opacity: .42; }
 @media (prefers-reduced-motion: reduce) { .noised-button, .noised-notes button { transition: none; } }
 
+
+/* Tuner readout: reusable measured-frequency display, with no audio or target state. */
+.noised-tuner-display { width: 100%; container-type: inline-size; font-variant-numeric: tabular-nums; }
+.noised-tuner-display__dial { position: relative; width: 100%; }
+.noised-tuner-display__readout { position: absolute; left: 50%; top: 42%; transform: translateX(-50%); padding: 4px 18px; background: var(--noised-display-bg, #fcfcf8); text-align: center; }
+.noised-tuner-display__note { white-space: nowrap; font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: clamp(84px, 26cqi, 144px); font-weight: 450; letter-spacing: -.075em; line-height: 1; }
+.noised-tuner-display__note sub { font-size: .25em; vertical-align: baseline; letter-spacing: -.02em; margin-left: 5px; opacity: .55; }
+.noised-tuner-display__empty { opacity: .22; }
+.noised-tuner-display__frequency { display: flex; align-items: baseline; justify-content: center; gap: 6px; margin-top: 12px; font: 13px ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: .04em; }
+.noised-tuner-display__frequency > span:last-child { font-size: 10px; opacity: .45; }
+.noised-tuner-display__deviation { display: flex; justify-content: center; align-items: center; gap: 28px; margin-top: 28px; }
+.noised-tuner-display__deviation > span { font-size: 10px; opacity: .12; }
+.noised-tuner-display__deviation > span[data-lit] { color: var(--noised-accent, #327255); opacity: 1; }
+.noised-tuner-display__deviation output { min-width: 124px; text-align: center; font: 28px ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: -.04em; }
+.noised-tuner-display__deviation small { font: 10px ui-monospace, "SFMono-Regular", Consolas, monospace; letter-spacing: 0; opacity: .45; margin-left: 7px; }
+.noised-tuner-display__status { margin-top: 13px; text-align: center; font-size: 12px; color: inherit; opacity: .55; }
+.noised-tuner-display[data-in-tune] .noised-tuner-display__note,
+.noised-tuner-display[data-in-tune] .noised-tuner-display__status { color: var(--noised-accent, #327255); opacity: 1; }
+.noised-tuner-display[data-held] .noised-tuner-display__readout { opacity: .4; }
+.noised-brand-link { display: inline-flex; gap: 9px; align-items: center; min-height: 44px; color: inherit; font-family: inherit; font-size: 11px; text-decoration: none; transition: opacity .15s; }
+.noised-brand-link img { display: block; height: auto; filter: var(--noised-logo-filter, none); }
+.noised-brand-link:focus-visible { outline: 2px solid var(--noised-focus-color, #327255); outline-offset: 4px; border-radius: 3px; }
+@media (prefers-reduced-motion: reduce) { .noised-brand-link { transition: none; } }
+

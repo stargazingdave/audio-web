@@ -11,3 +11,5 @@ export { LevelMeter, type LevelMeterProps } from './level-meter';
 export { NoteSelector, type NoteSelectorProps, type NoteOption } from './note-selector';
 export { PitchMeter, type PitchMeterProps } from './pitch-meter';
 export { AudioIcon, type AudioIconProps, type AudioIconName } from './audio-icon';
+export { TunerDisplay, type TunerDisplayProps } from './tuner-display';
+export { BrandLink, type BrandLinkProps } from './brand-link';

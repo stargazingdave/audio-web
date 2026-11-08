@@ -232,3 +232,18 @@ import { PitchMeter, NoteSelector } from 'noised-ui';
   value={target} onChange={setTarget} />
 ```
 
+
+### Combined tuner display and brand link
+
+`TunerDisplay` combines `PitchMeter` with a measured note/frequency readout,
+cent deviation, and concise tuning status. Required props: `note` (`{name,
+octave} | null`), `frequency` (`number | null`), and `cents` (`number | null`).
+Optional: `active`, `listening`, `tolerance` (3 cents), and `className`.
+It owns no detection, target selection, or smoothing. Invalid readings remain
+unmeasured; green requires valid live evidence. Use `--noised-display-bg` to
+match the readout background to its instrument surface.
+
+`BrandLink` takes `href`, `label`, and `logoSrc`, with optional `logoWidth` (28)
+and `className`. It renders only the supplied logo and label as an external
+link with `noopener noreferrer`. Theme a monochrome logo through
+`--noised-logo-filter` when needed.
