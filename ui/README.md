@@ -18,7 +18,7 @@ the Storm engine's version.
 From another project, install the locally packed library:
 
 ```sh
-npm install /path/to/storm-synth-ui-1.0.0-beta.1.tgz
+npm install /path/to/audio-ui-kit-1.0.0-beta.1.tgz
 ```
 
 React is a peer dependency; the package accepts React 18 or 19. The monorepo

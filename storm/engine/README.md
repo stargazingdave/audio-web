@@ -13,7 +13,7 @@ API candidate; beta versions may still change the public API. See the
 [release procedure](https://github.com/stargazingdave/audio-web#publish-a-library-release)
 for verification and publishing. The engine and UI have independent releases.
 
-Build a local tarball with `npm run pack:library` at the monorepo root, then install the resulting `artifacts/storm-synth-storm-1.0.0-beta.1.tgz` in another project. After publication, use `npm install storm-synth@beta`.
+Build a local tarball with `npm run pack:library` at the monorepo root, then install the resulting `artifacts/storm-synth-1.0.0-beta.1.tgz` in another project. After publication, use `npm install storm-synth@beta`.
 
 Initialize from a user interaction. With Vite, import the packaged assets as URLs:
 

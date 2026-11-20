@@ -51,7 +51,7 @@ npm run pack:library
 npm run pack:ui
 ```
 
-Install `artifacts/storm-synth-storm-1.0.0-beta.1.tgz` or `artifacts/storm-synth-ui-1.0.0-beta.1.tgz` in
+Install `artifacts/storm-synth-1.0.0-beta.1.tgz` or `artifacts/audio-ui-kit-1.0.0-beta.1.tgz` in
 another project. Package versions are independent. Consumers need neither this
 checkout nor Rust; worklet/WASM assets are included in the engine package.
 React 18 or 19 is a UI peer dependency. Storm itself has no React dependency.
@@ -125,16 +125,16 @@ Vite receives `VITE_BASE_PATH` from Pages metadata. Development defaults to `/`.
 To check a production project path locally in PowerShell:
 
 ```powershell
-$env:VITE_BASE_PATH = '/storm-synth-web/'
+$env:VITE_BASE_PATH = '/audio-web/'
 npm run build
 npm run test:ui
 npm run preview
-# Open http://127.0.0.1:4173/storm-synth-web/
+# Open http://127.0.0.1:4173/audio-web/
 # After stopping preview:
 Remove-Item Env:VITE_BASE_PATH
 ```
 
-On POSIX shells, use `export VITE_BASE_PATH=/storm-synth-web/` and unset it afterward.
+On POSIX shells, use `export VITE_BASE_PATH=/audio-web/` and unset it afterward.
 Keep the same base path for build, browser check and preview. Logo, starfields,
 JS, CSS, WASM and AudioWorklet URLs respect the configured path.
 
