@@ -173,8 +173,8 @@ export function Knob({
     const radians = angle * Math.PI / 180;
 
     return (
-        <div className={`noised-knob ${className}`} data-density={density} data-compact={size < 70 || undefined} data-disabled={disabled || undefined}>
-            <div className="noised-knob__label" style={{ color: colors?.labels }}>{label}</div>
+        <div className={`audio-knob ${className}`} data-density={density} data-compact={size < 70 || undefined} data-disabled={disabled || undefined}>
+            <div className="audio-knob__label" style={{ color: colors?.labels }}>{label}</div>
             <svg
                 aria-disabled={disabled}
                 aria-label={label || "Knob control"}
@@ -192,7 +192,7 @@ export function Knob({
                     if (event.currentTarget.hasPointerCapture(event.pointerId)) updateFromPointer(event);
                 }}
                 role="slider"
-                className="noised-knob__dial"
+                className="audio-knob__dial"
                 tabIndex={disabled ? -1 : 0}
                 width={size}
             >
@@ -224,14 +224,14 @@ export function Knob({
                 />
             </svg>
 
-            <div className="noised-knob__values" style={{ color: colors?.labels, width: density === 'compact' ? Math.max(size + 8, 56) : size + 8 }}>
-                <div className="noised-knob__bounds" style={{ top: -size * 0.15 }}>
+            <div className="audio-knob__values" style={{ color: colors?.labels, width: density === 'compact' ? Math.max(size + 8, 56) : size + 8 }}>
+                <div className="audio-knob__bounds" style={{ top: -size * 0.15 }}>
                     <span>{min}</span>
                     <span>{max}</span>
                 </div>
                 <input
                     aria-label={label || "Knob value input"}
-                    className="noised-knob__input"
+                    className="audio-knob__input"
                     disabled={disabled}
                     inputMode="decimal"
                     onBlur={commitDraft}

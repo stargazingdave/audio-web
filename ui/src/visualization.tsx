@@ -125,9 +125,9 @@ export function Visualization({
     }, [analyser, barCount, canvasSize, color, isPlaying, type, visualStyle, minFrequency, maxFrequency]);
 
     return (
-        <div ref={containerRef} className={`noised-visualization ${className}`} style={{ height }}
+        <div ref={containerRef} className={`audio-visualization ${className}`} style={{ height }}
             role="img" aria-label={label} data-type={type} data-style={visualStyle}>
-            <canvas ref={canvasRef} className="noised-visualization__canvas" aria-hidden="true" />
+            <canvas ref={canvasRef} className="audio-visualization__canvas" aria-hidden="true" />
         </div>
     );
 }

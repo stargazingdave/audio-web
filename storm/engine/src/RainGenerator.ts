@@ -121,7 +121,7 @@ export class RainGenerator<T extends BaseAudioContext = AudioContext> {
         this.backendReady = (async () => {
             const module = await loadRainWorklet(this.audioCtx, options);
             if (this.destroyed) throw new Error('Rain generator was destroyed during initialization.');
-            const node = new AudioWorkletNode(this.audioCtx, 'noised-rain', {
+            const node = new AudioWorkletNode(this.audioCtx, 'storm-synth-rain', {
                 numberOfInputs: 0, numberOfOutputs: 2, outputChannelCount: [1, 2],
                 processorOptions: { module, params: this.params, maxVoices: options.maxVoices ?? 128, seed: options.seed ?? 1 },
             });

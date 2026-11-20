@@ -15,7 +15,7 @@ interface ThemeContextValue {
     setTheme: (theme: Theme) => void;
 }
 
-const THEME_STORAGE_KEY = "noised-storm-theme";
+const THEME_STORAGE_KEY = "storm-synth-theme";
 const THEME_CHANGE_EVENT = "theme-change";
 const SYSTEM_THEME_QUERY = "(prefers-color-scheme: dark)";
 

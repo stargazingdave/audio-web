@@ -14,7 +14,7 @@ test('controls render on the server without a browser or audio engine', () => {
     assert.match(markup, /aria-label="Gain"/);
     assert.match(markup, /aria-label="Gain at 1.0k"/);
     assert.match(markup, /role="switch" aria-checked="true"/);
-    assert.match(markup, /noised-visualization/);
+    assert.match(markup, /audio-visualization/);
     assert.match(markup, /aria-label="Live audio waveform"/);
 });
 
@@ -32,7 +32,7 @@ test('EQ accepts decorative React content behind its bars', () => {
         gains: [0, 3], freqs: [100, 1000], onChange() {},
         barsBackground: createElement(Visualization, { analyser: null, isPlaying: false, height: '100%' }),
     }));
-    assert.match(markup, /class="noised-equalizer__plot"><div class="noised-equalizer__background" aria-hidden="true"><div class="noised-visualization/);
+    assert.match(markup, /class="audio-equalizer__plot"><div class="audio-equalizer__background" aria-hidden="true"><div class="audio-visualization/);
     assert.equal([...markup.matchAll(/role="slider"/g)].length, 2);
     assert.match(markup, /Reset all bands to 0 dB/);
 });

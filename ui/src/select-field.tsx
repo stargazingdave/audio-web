@@ -4,7 +4,7 @@ export interface SelectFieldProps extends SelectHTMLAttributes<HTMLSelectElement
 export function SelectField({ label, hint, id, className = '', ...props }: SelectFieldProps) {
   const generated = useId();
   const controlId = id || generated;
-  return <div className={`noised-field ${className}`}>
+  return <div className={`audio-field ${className}`}>
     <label htmlFor={controlId}>{label}</label>
     <select {...props} id={controlId} aria-describedby={hint ? controlId + '-hint' : undefined} />
     {hint ? <span id={controlId + '-hint'}>{hint}</span> : null}

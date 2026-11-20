@@ -99,4 +99,4 @@ class RainProcessor extends AudioWorkletProcessor {
     }
 }
 
-registerProcessor('noised-rain', RainProcessor);
+registerProcessor('storm-synth-rain', RainProcessor);

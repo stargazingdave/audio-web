@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/noised-dsp"]
+members = ["crates/storm-synth-dsp"]
 resolver = "2"
 
 [profile.release]

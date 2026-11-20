@@ -13,7 +13,7 @@ test('default ESM and CommonJS imports share one style element; unstyled imports
         const children = [hostStyle];
         globalThis.document = {
             head: {
-                querySelector() { return children.find(node => node.attributes?.['data-noised-ui'] !== undefined); },
+                querySelector() { return children.find(node => node.attributes?.['data-audio-ui-kit'] !== undefined); },
                 prepend(node) { children.unshift(node); },
             },
             createElement(tag) {

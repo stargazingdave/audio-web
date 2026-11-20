@@ -1,5 +1,5 @@
 // Optional real-browser integration test. Install Playwright locally, or point
-// NOISED_PLAYWRIGHT_PATH at an existing Playwright package. Uses installed Chrome.
+// AUDIO_PLAYWRIGHT_PATH at an existing Playwright package. Uses installed Chrome.
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
 import { readFile } from 'node:fs/promises';
@@ -8,11 +8,11 @@ import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
 const require = createRequire(import.meta.url);
-const { chromium } = require(process.env.NOISED_PLAYWRIGHT_PATH || 'playwright');
+const { chromium } = require(process.env.AUDIO_PLAYWRIGHT_PATH || 'playwright');
 const root = fileURLToPath(new URL('../dist/', import.meta.url));
 const server = createServer(async (req, res) => {
     try {
-        if (req.url === '/') { res.setHeader('Content-Type', 'text/html'); res.end('<!doctype html><title>Noised integration test</title>'); return; }
+        if (req.url === '/') { res.setHeader('Content-Type', 'text/html'); res.end('<!doctype html><title>StormSynth integration test</title>'); return; }
         const name = path.resolve(root, '.' + new URL(req.url, 'http://localhost').pathname);
         if (!name.startsWith(root)) { res.writeHead(403); res.end(); return; }
         res.setHeader('Content-Type', name.endsWith('.wasm') ? 'application/wasm' : 'text/javascript');
@@ -22,15 +22,15 @@ const server = createServer(async (req, res) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 let browser;
 try {
-    browser = await chromium.launch({ channel: process.env.NOISED_BROWSER_CHANNEL || 'chrome', headless: true,
+    browser = await chromium.launch({ channel: process.env.AUDIO_BROWSER_CHANNEL || 'chrome', headless: true,
         args: ['--autoplay-policy=no-user-gesture-required'] });
     const page = await browser.newPage();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(`http://127.0.0.1:${server.address().port}/`);
     const result = await page.evaluate(async () => {
-        const { RainGenerator, NoiseDController, RainGeneratorV2, defaultRainParamsV2 } = await import('/index.js');
-        const options = { workletUrl: '/worklet/rain.worklet.js', wasmUrl: '/wasm/noised_dsp.wasm', seed: 42 };
+        const { RainGenerator, StormSynthController, RainGeneratorV2, defaultRainParamsV2 } = await import('/index.js');
+        const options = { workletUrl: '/worklet/rain.worklet.js', wasmUrl: '/wasm/storm_synth_dsp.wasm', seed: 42 };
         const ctx = new AudioContext({ sampleRate: 48000 });
         const rain = await RainGenerator.createWasm(ctx, { dropRate: 300 }, options);
         let processorErrors = 0;
@@ -67,13 +67,13 @@ try {
         offlineRain.destroy();
 
         const nativeCtx = new AudioContext();
-        const controller = new NoiseDController(nativeCtx, { delayBetweenThunders: { min: 100, max: 100 },
+        const controller = new StormSynthController(nativeCtx, { delayBetweenThunders: { min: 100, max: 100 },
             rainParams: { dropRate: 10 }, thunderParams: { duration: { value: 0.1 }, rumbleDecay: { value: 0.2 } } });
         const wav = await controller.renderToFile(0.5);
         const decoded = await nativeCtx.decodeAudioData(await wav.arrayBuffer());
         const wavEnergy = decoded.getChannelData(0).reduce((sum, x) => sum + x * x, 0);
         controller.destroy();
-        const wasmController = await NoiseDController.createWasm(nativeCtx,
+        const wasmController = await StormSynthController.createWasm(nativeCtx,
             { rainParams: { dropRate: 300, noiseLevel: 0 }, thunderParams: { on: false } }, options);
         const wasmWav = await wasmController.renderToFile(0.2);
         const wasmDecoded = await nativeCtx.decodeAudioData(await wasmWav.arrayBuffer());

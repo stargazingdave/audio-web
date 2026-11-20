@@ -14,8 +14,8 @@ export function AmpToggleSwitch({
     className = "",
 }: AmpToggleSwitchProps) {
     return (
-        <div className={`noised-switch ${className}`}>
-            {label && <span className="noised-switch__label">{label}</span>}
+        <div className={`audio-switch ${className}`}>
+            {label && <span className="audio-switch__label">{label}</span>}
             <button
                 type="button"
                 role="switch"
@@ -23,10 +23,10 @@ export function AmpToggleSwitch({
                 aria-label={label || "Parameter modulation"}
                 disabled={disabled}
                 onClick={() => onChange(!checked)}
-                className="noised-switch__button"
+                className="audio-switch__button"
             >
-                <span className="noised-switch__ring" aria-hidden="true" />
-                <span className="noised-switch__lever" aria-hidden="true" />
+                <span className="audio-switch__ring" aria-hidden="true" />
+                <span className="audio-switch__lever" aria-hidden="true" />
             </button>
         </div>
     );

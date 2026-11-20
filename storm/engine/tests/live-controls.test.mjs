@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { Context, WorkletNode } from './audio-mock.mjs';
-import { RainGenerator, ThunderGenerator, NoiseDController, RainGeneratorV2, ThunderGeneratorV2,
-    NoiseDControllerV2, defaultRainParamsV2, defaultThunderParamsV2 } from '../dist/index.js';
+import { RainGenerator, ThunderGenerator, StormSynthController, RainGeneratorV2, ThunderGeneratorV2,
+    StormSynthControllerV2, defaultRainParamsV2, defaultThunderParamsV2 } from '../dist/index.js';
 
 test('legacy rain applies live patches, remembers stopped controls, and starts one timer', async () => {
     const ctx = new Context();
@@ -58,8 +58,8 @@ test('stop during resume cancels a pending start', async () => {
 
 test('instance controls do not mutate defaults or other instances', () => {
     const ctx = new Context();
-    const a = new NoiseDController(ctx);
-    const b = new NoiseDController(ctx);
+    const a = new StormSynthController(ctx);
+    const b = new StormSynthController(ctx);
     a.setEqGain(0, 12);
     a.setRainVolume(0.1);
     assert.equal(JSON.parse(b.exportParamsAsJSON()).eqGains[0], 0);
@@ -94,7 +94,7 @@ test('controller starts one thunder timer and honors live on/off switches', asyn
     globalThis.setTimeout = fn => { timers.set(++id, fn); return id; };
     globalThis.clearTimeout = key => timers.delete(key);
     try {
-        const controller = new NoiseDController(ctx, { rainParams: { on: false } });
+        const controller = new StormSynthController(ctx, { rainParams: { on: false } });
         await controller.start();
         controller.startThunder(); controller.startThunder();
         assert.equal(timers.size, 1);
@@ -159,7 +159,7 @@ test('V2 controller path controls update snapshots and gate ticks', async () => 
     const initial = { masterVolume: 0.5, eqGains: [1],
         rainParams: { ...structuredClone(defaultRainParamsV2), on: false },
         thunderParams: { ...structuredClone(defaultThunderParamsV2), on: false } };
-    const controller = new NoiseDControllerV2(initial);
+    const controller = new StormSynthControllerV2(initial);
     await controller.start();
     controller.setParam('rainParams.const.drops.rate', 4);
     assert.equal(controller.getParams().rainParams.const.drops.rate, 4);
@@ -181,7 +181,7 @@ test('V2 controller path controls update snapshots and gate ticks', async () => 
 test('WASM factory connects stereo drops and forwards live controls without native timers', async () => {
     globalThis.AudioWorkletNode = WorkletNode;
     const oldFetch = globalThis.fetch;
-    const wasm = await readFile(new URL('../dist/wasm/noised_dsp.wasm', import.meta.url));
+    const wasm = await readFile(new URL('../dist/wasm/storm_synth_dsp.wasm', import.meta.url));
     globalThis.fetch = async () => new Response(wasm);
     const ctx = new Context();
     try {
@@ -226,7 +226,7 @@ test('failed WASM asset loads clean up and allow a later retry', async () => {
         const options = { workletUrl: 'worklet.js', wasmUrl: 'missing.wasm' };
         await assert.rejects(RainGenerator.createWasm(ctx, {}, options), /HTTP 404/);
         assert.ok(ctx.nodes.every(node => node.disconnected));
-        const bytes = await readFile(new URL('../dist/wasm/noised_dsp.wasm', import.meta.url));
+        const bytes = await readFile(new URL('../dist/wasm/storm_synth_dsp.wasm', import.meta.url));
         globalThis.fetch = async () => new Response(bytes);
         const rain = await RainGenerator.createWasm(ctx, {}, options);
         await rain.start(); rain.destroy();
@@ -246,7 +246,7 @@ test('WAV export renders once and interleaves stereo correctly', async () => {
             return buffer;
         }
     };
-    const controller = new NoiseDController(new Context(), { rainParams: { on: false }, thunderParams: { on: false } });
+    const controller = new StormSynthController(new Context(), { rainParams: { on: false }, thunderParams: { on: false } });
     const blob = await controller.renderToFile(1);
     const data = new DataView(await blob.arrayBuffer());
     assert.equal(renders, 1);

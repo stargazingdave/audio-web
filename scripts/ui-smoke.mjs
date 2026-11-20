@@ -6,7 +6,7 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 
 const require = createRequire(import.meta.url);
-const { chromium } = require(process.env.NOISED_PLAYWRIGHT_PATH || 'playwright');
+const { chromium } = require(process.env.AUDIO_PLAYWRIGHT_PATH || 'playwright');
 const root = fileURLToPath(new URL('../', import.meta.url));
 const artifacts = path.join(root, 'artifacts');
 await mkdir(artifacts, { recursive: true });
@@ -26,7 +26,7 @@ try {
         await new Promise(resolve => setTimeout(resolve, 100));
     }
     if (!ready) throw new Error('Preview server did not become ready: ' + output);
-    browser = await chromium.launch({ channel: process.env.NOISED_BROWSER_CHANNEL || 'chrome', headless: true,
+    browser = await chromium.launch({ channel: process.env.AUDIO_BROWSER_CHANNEL || 'chrome', headless: true,
         args: ['--autoplay-policy=no-user-gesture-required'] });
     const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, colorScheme: 'light' });
     const errors = [];
@@ -39,7 +39,7 @@ try {
     const chooseVisualStyle = async name => {
         await page.getByRole('button', { name: 'Visualization styles', exact: true }).click();
         await page.getByRole('menuitemradio', { name, exact: true }).click();
-        await page.locator(`.noised-visualization[data-style="${name.toLowerCase()}"]`).waitFor();
+        await page.locator(`.audio-visualization[data-style="${name.toLowerCase()}"]`).waitFor();
     };
     page.on('pageerror', error => errors.push(error.message));
     page.on('response', response => {
@@ -64,8 +64,8 @@ try {
         };
     });
     await page.goto(url + '/');
-    await page.getByRole('heading', { name: 'NoiseD Storm', exact: true }).waitFor();
-    assert.equal(await page.locator('style[data-noised-ui]').count(), 1);
+    await page.getByRole('heading', { name: 'Storm Synth', exact: true }).waitFor();
+    assert.equal(await page.locator('style[data-audio-ui-kit]').count(), 1);
     const masterControls = page.getByRole('region', { name: 'Master controls', exact: true });
     const player = page.getByRole('region', { name: 'Storm Player', exact: true });
     assert.equal(await page.getByRole('tab').count(), 2);
@@ -92,14 +92,14 @@ try {
     await page.screenshot({ path: path.join(artifacts, 'visualization-style-menu.png') });
     await page.keyboard.press('ArrowDown');
     await page.keyboard.press('Enter');
-    await page.locator('.noised-visualization[data-style="aurora"]').waitFor();
+    await page.locator('.audio-visualization[data-style="aurora"]').waitFor();
     await chooseVisualStyle('Phosphor');
     await eqToggle.click();
     assert.equal(await page.locator('.storm-scope canvas').count(), 1);
     assert.ok(await masterEq.evaluate(eq => {
-        const plot = eq.querySelector('.noised-equalizer__plot').getBoundingClientRect();
-        const background = eq.querySelector('.noised-equalizer__background').getBoundingClientRect();
-        const labels = eq.querySelector('.noised-equalizer__frequencies').getBoundingClientRect();
+        const plot = eq.querySelector('.audio-equalizer__plot').getBoundingClientRect();
+        const background = eq.querySelector('.audio-equalizer__background').getBoundingClientRect();
+        const labels = eq.querySelector('.audio-equalizer__frequencies').getBoundingClientRect();
         return Math.abs(background.x - plot.x) < 1 && Math.abs(background.y - plot.y) < 1
             && Math.abs(background.width - plot.width) < 1 && Math.abs(background.height - plot.height) < 1
             && background.bottom <= labels.top;
@@ -134,7 +134,7 @@ try {
     await page.waitForFunction(() => document.documentElement.classList.contains('dark'));
     await page.emulateMedia({ colorScheme: 'light' });
     await page.waitForFunction(() => !document.documentElement.classList.contains('dark'));
-    assert.equal(await page.evaluate(() => localStorage.getItem('noised-storm-theme')), 'system');
+    assert.equal(await page.evaluate(() => localStorage.getItem('storm-synth-theme')), 'system');
     await page.getByRole('button', { name: 'Light theme', exact: true }).click();
     await eqToggle.click();
     await player.screenshot({ path: path.join(artifacts, 'player-eq-background-light.png') });
@@ -142,7 +142,7 @@ try {
     await selectPreset('far-storm');
     for (const tab of ['Rain', 'Thunder']) {
         await page.getByRole('tab', { name: tab, exact: true }).click();
-        const eq = page.getByRole('tabpanel').locator('.noised-equalizer');
+        const eq = page.getByRole('tabpanel').locator('.audio-equalizer');
         await eq.getByRole('slider').first().press('ArrowUp');
         await eq.getByRole('slider').last().press('ArrowDown');
         await eq.getByRole('button', { name: 'Reset all bands to 0 dB', exact: true }).click();
@@ -342,7 +342,7 @@ try {
             const overflowingGroups = await page.locator('.control-group-body').evaluateAll(groups => groups.flatMap(group => {
                 const bounds = group.getBoundingClientRect();
                 const clipped = group.scrollWidth > group.clientWidth + 1 || group.scrollHeight > group.clientHeight + 1
-                    || [...group.querySelectorAll('.noised-knob, .parameter-heading, .noised-switch, .control-select')].some(control => {
+                    || [...group.querySelectorAll('.audio-knob, .parameter-heading, .audio-switch, .control-select')].some(control => {
                         const rect = control.getBoundingClientRect();
                         return rect.left < bounds.left - 1 || rect.right > bounds.right + 1
                             || rect.top < bounds.top - 1 || rect.bottom > bounds.bottom + 1;

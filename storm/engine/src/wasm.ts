@@ -28,7 +28,7 @@ export async function loadRainWorklet(ctx: BaseAudioContext, options: WasmRainOp
         pending.catch(() => cache!.delete(url));
     }
     const module = fetch(options.wasmUrl).then(async response => {
-        if (!response.ok) throw new Error(`Unable to load Noised WASM: HTTP ${response.status}`);
+        if (!response.ok) throw new Error(`Unable to load StormSynth WASM: HTTP ${response.status}`);
         // arrayBuffer works even when a static host omits application/wasm.
         return WebAssembly.compile(await response.arrayBuffer());
     });

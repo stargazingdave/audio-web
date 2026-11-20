@@ -1,34 +1,34 @@
-# NoiseD UI
+# Audio UI Kit
 
 React controls for audio interfaces: `Knob`, `Equalizer`, `AmpToggleSwitch`, and `Visualization`.
 The package includes ESM, CommonJS, TypeScript declarations and automatic scoped styles.
-It has no dependency on NoiseD Storm, Tailwind, or a theme provider. The
+It has no dependency on Storm Synth, Tailwind, or a theme provider. The
 visualization reads a caller-provided Web Audio `AnalyserNode`; it does not
 create an audio context or start playback.
 
 ## Install and use
 
 Release candidate: **1.0.0-beta.1**, intended for the `beta` tag. After the
-first publication, install it with `npm install noised-ui@beta`. This is a 1.0
+first publication, install it with `npm install audio-ui-kit@beta`. This is a 1.0
 API candidate; interfaces may still change between beta versions. See the
-[release procedure](https://github.com/stargazingdave/noised-web#publish-a-library-release)
+[release procedure](https://github.com/stargazingdave/audio-web#publish-a-library-release)
 for verification and publishing commands. Normal releases are independent of
 the Storm engine's version.
 
 From another project, install the locally packed library:
 
 ```sh
-npm install /path/to/noised-ui-1.0.0-beta.1.tgz
+npm install /path/to/storm-synth-ui-1.0.0-beta.1.tgz
 ```
 
 React is a peer dependency; the package accepts React 18 or 19. The monorepo
 currently tests with React 19. No CSS import is needed for the default entry point.
-Importing it in the browser installs one `<style data-noised-ui>` element in
+Importing it in the browser installs one `<style data-audio-ui-kit>` element in
 `document.head`. Server-side imports never access the DOM.
 
 ```tsx
 import { useState } from 'react';
-import { Knob, Equalizer, AmpToggleSwitch } from 'noised-ui';
+import { Knob, Equalizer, AmpToggleSwitch } from 'audio-ui-kit';
 
 export function AudioControls() {
   const [volume, setVolume] = useState(0.5);
@@ -74,7 +74,7 @@ The Storm demo provides an example of these bindings.
   to that area, excluded from accessibility, and does not intercept pointer
   input. Guides and interactive bars render above it; the dB scale, frequency
   labels, and Flat button remain outside it. Set its opacity through
-  `.noised-equalizer__background` in your app if desired.
+  `.audio-equalizer__background` in your app if desired.
 - **AmpToggleSwitch**: required `checked` and `onChange`; optional `label`,
   `disabled` and `className`. A keyboard-accessible switch with an amp-style lever.
 - **Visualization**: required `analyser` (`AnalyserNode | null`) and `isPlaying`.
@@ -97,7 +97,7 @@ The Storm demo provides an example of these bindings.
   container with an explicit height, as the Storm demo does.
 
 ```tsx
-import { Visualization } from 'noised-ui';
+import { Visualization } from 'audio-ui-kit';
 
 <Visualization analyser={analyser} isPlaying={isPlaying} type="spectrum"
   visualStyle="aurora" maxFrequency={12000} height={80} color="#9cd8e4" />
@@ -136,16 +136,16 @@ copies and multiple component instances share one style element per document.
 Production bundlers retain this initialization through the package's
 `sideEffects` metadata. It does not add a global page reset.
 
-Classes are prefixed `noised-`. Controls inherit text color and can be customized
+Classes are prefixed `audio-`. Controls inherit text color and can be customized
 with their color props or an app-owned `className`. The focus outline color can
-be changed with the inherited `--noised-focus-color` CSS custom property.
+be changed with the inherited `--audio-focus-color` CSS custom property.
 Motion respects `prefers-reduced-motion`.
 
 No CSS tooling or theme provider is required. For example:
 
 ```css
-.my-audio-controls { --noised-focus-color: #44cdda; }
-.my-audio-controls .noised-equalizer__background { opacity: 0.6; }
+.my-audio-controls { --audio-focus-color: #44cdda; }
+.my-audio-controls .audio-equalizer__background { opacity: 0.6; }
 ```
 
 ### SSR and explicit stylesheet control
@@ -156,11 +156,11 @@ they do not emit CSS in server HTML. To style the first server-rendered frame,
 let your framework include the CSS in the document before hydration:
 
 ```tsx
-import { Knob, Equalizer, Visualization } from 'noised-ui/unstyled';
-import 'noised-ui/styles.css'; // Your framework/bundler loads or extracts this.
+import { Knob, Equalizer, Visualization } from 'audio-ui-kit/unstyled';
+import 'audio-ui-kit/styles.css'; // Your framework/bundler loads or extracts this.
 ```
 
-`noised-ui/unstyled` exports the same components and types without injecting
+`audio-ui-kit/unstyled` exports the same components and types without injecting
 anything. Use it with the explicit stylesheet for strict CSPs that disallow
 inline `<style>` elements, or when your application manages styles itself.
 Controls still use inline style attributes for dynamic sizes, colors and values;
@@ -181,9 +181,9 @@ audio graph you own when its player unmounts.
 From the repository root:
 
 ```sh
-npm run build --workspace=noised-ui
+npm run build --workspace=audio-ui-kit
 npm run dev:ui
-npm run test --workspace=noised-ui
+npm run test --workspace=audio-ui-kit
 npm run pack:ui
 ```
 
@@ -220,13 +220,13 @@ They use the same automatic styles and SSR-safe entries as the existing controls
 - `AudioIcon`: decorative icon with `name`:
   `microphone`, `stop`, `play`, `check`, `arrow`, `settings`, or `headphones`.
 
-Theme with inherited CSS variables: `--noised-ink`, `--noised-on-ink`,
-`--noised-accent`, `--noised-accent-soft`, `--noised-surface`,
-`--noised-border`, `--noised-control-bg`, and `--noised-focus-color`.
+Theme with inherited CSS variables: `--audio-ink`, `--audio-on-ink`,
+`--audio-accent`, `--audio-accent-soft`, `--audio-surface`,
+`--audio-border`, `--audio-control-bg`, and `--audio-focus-color`.
 No global reset or app-specific layout is installed.
 
 ```tsx
-import { PitchMeter, NoteSelector } from 'noised-ui';
+import { PitchMeter, NoteSelector } from 'audio-ui-kit';
 <PitchMeter cents={reading ? reading.cents : null} active={isVoiced} />
 <NoteSelector notes={[{ id: '40', name: 'E', octave: 2, detail: '6' }]}
   value={target} onChange={setTarget} />
@@ -240,10 +240,10 @@ cent deviation, and concise tuning status. Required props: `note` (`{name,
 octave} | null`), `frequency` (`number | null`), and `cents` (`number | null`).
 Optional: `active`, `listening`, `tolerance` (3 cents), and `className`.
 It owns no detection, target selection, or smoothing. Invalid readings remain
-unmeasured; green requires valid live evidence. Use `--noised-display-bg` to
+unmeasured; green requires valid live evidence. Use `--audio-display-bg` to
 match the readout background to its instrument surface.
 
 `BrandLink` takes `href`, `label`, and `logoSrc`, with optional `logoWidth` (28)
 and `className`. It renders only the supplied logo and label as an external
 link with `noopener noreferrer`. Theme a monochrome logo through
-`--noised-logo-filter` when needed.
+`--audio-logo-filter` when needed.

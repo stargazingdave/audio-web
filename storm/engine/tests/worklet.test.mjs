@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import { _defaultRainParams } from '../dist/index.js';
 
 const source = await readFile(new URL('../dist/worklet/rain.worklet.js', import.meta.url), 'utf8');
-const module = await WebAssembly.compile(await readFile(new URL('../dist/wasm/noised_dsp.wasm', import.meta.url)));
+const module = await WebAssembly.compile(await readFile(new URL('../dist/wasm/storm_synth_dsp.wasm', import.meta.url)));
 
 function processor(params = {}) {
     let Processor;

@@ -1,7 +1,7 @@
 # Storm demo
 
-Private Vite/React player consuming [NoiseD Storm](../engine/README.md) and
-[NoiseD UI](../../ui/README.md). Run installation and scripts from the
+Private Vite/React player consuming [Storm Synth](../engine/README.md) and
+[Audio UI Kit](../../ui/README.md). Run installation and scripts from the
 [workspace root](../../README.md); the demo is not an npm library.
 
 ## Run and verify
@@ -39,7 +39,7 @@ library supplies reusable controls; the demo owns layout, theme and audio bindin
 
 The Presets tool selects built-in Default, Close Storm and Far Storm sounds.
 Save preset downloads current settings as a named JSON document with fields
-`version` (1), `name` (a string), and `params` (complete `NoiseDParams`).
+`version` (1), `name` (a string), and `params` (complete `StormSynthParams`).
 
 Load preset validates a JSON file, adds it to the session list, selects it and
 immediately applies it to the live graph without restarting playback. Earlier
@@ -61,9 +61,9 @@ errors appear in the player, and rendering disables duplicate downloads.
 
 ## Component and state ownership
 
-`NoisedSynth` composes small header and tab components beneath one
-`NoisedControllerProvider`. Child components call the context consumer hook;
-only the provider calls `useCreateNoisedController` to own the audio graph.
+`StormSynthSynth` composes small header and tab components beneath one
+`StormSynthControllerProvider`. Child components call the context consumer hook;
+only the provider calls `useCreateStormSynthController` to own the audio graph.
 Calling the state-creating hook separately in each child would disconnect the
 visualization, transport, presets and controls from each other.
 

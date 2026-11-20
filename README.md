@@ -1,18 +1,18 @@
-# NoiseD Web
+# David Portal Audio Web
 
-NoiseD Storm and NoiseD UI are independent libraries managed by one npm workspace.
+Storm Synth and Audio UI Kit are independent libraries managed by one npm workspace.
 The Storm demo consumes both; it is private and is not published.
 
 | Directory | Package / purpose | Documentation |
 | --- | --- | --- |
-| `storm/engine` | `noised-storm`: Rust/WASM rain and Web Audio thunder | [Engine API, assets and lifecycle](storm/engine/README.md) |
-| `ui` | `noised-ui`: React audio controls with automatic scoped styling | [Components, styling and SSR](ui/README.md) |
+| `storm/engine` | `storm-synth`: Rust/WASM rain and Web Audio thunder | [Engine API, assets and lifecycle](storm/engine/README.md) |
+| `ui` | `audio-ui-kit`: React audio controls with automatic scoped styling | [Components, styling and SSR](ui/README.md) |
 | `storm/demo` | Vite/React player using both libraries | [Layout, presets and export](storm/demo/README.md) |
 | `scripts` | Browser and standalone-package checks | Verification below |
 | `artifacts` | Ignored screenshots, downloaded audio and tarballs | Local output only |
 
-The sibling `../vst-plugins` directory is a separate Git repository for native
-JUCE plugins. It has its own C++ build and UI; this workspace does not build it.
+The sibling `../plugins` directory is a separate Git repository for native
+VST3 plugins. It has its own C++ build and UI; this workspace does not build it.
 
 ## Set up and develop
 
@@ -40,8 +40,8 @@ Engine changes require rebuilding the engine; demo source uses Vite hot reload.
 | `npm run test:package` | Installs packed libraries in an independent consumer; checks exports, types, SSR, assets, automatic/explicit styles and interactions |
 | `npm run bench` | Rain performance benchmark |
 
-Browser checks need installed Chrome. Set `NOISED_BROWSER_CHANNEL` to another
-installed Playwright browser channel, or `NOISED_PLAYWRIGHT_PATH` to a Playwright
+Browser checks need installed Chrome. Set `AUDIO_BROWSER_CHANNEL` to another
+installed Playwright browser channel, or `AUDIO_PLAYWRIGHT_PATH` to a Playwright
 module path. Screenshots, downloads and tarballs are saved under `artifacts/`.
 
 ## Consume or package a library
@@ -51,18 +51,18 @@ npm run pack:library
 npm run pack:ui
 ```
 
-Install `artifacts/noised-storm-1.0.0-beta.1.tgz` or `artifacts/noised-ui-1.0.0-beta.1.tgz` in
+Install `artifacts/storm-synth-storm-1.0.0-beta.1.tgz` or `artifacts/storm-synth-ui-1.0.0-beta.1.tgz` in
 another project. Package versions are independent. Consumers need neither this
 checkout nor Rust; worklet/WASM assets are included in the engine package.
 React 18 or 19 is a UI peer dependency. Storm itself has no React dependency.
 
 ```tsx
-import { Knob, Equalizer, Visualization } from 'noised-ui';
+import { Knob, Equalizer, Visualization } from 'audio-ui-kit';
 // Styles are installed automatically in the browser. No CSS import is needed.
 ```
 
-For SSR first-paint CSS or explicit style control, use `noised-ui/unstyled`
-with `noised-ui/styles.css`; see the [UI README](ui/README.md). Neither library
+For SSR first-paint CSS or explicit style control, use `audio-ui-kit/unstyled`
+with `audio-ui-kit/styles.css`; see the [UI README](ui/README.md). Neither library
 requires Tailwind or a theme provider. Storm audio needs browser Web Audio,
 HTTPS or localhost, and initialization from a user interaction.
 
@@ -80,18 +80,18 @@ then run these commands from the workspace root:
 ```sh
 npm login
 npm whoami
-npm publish --workspace=noised-storm --access public --tag beta --dry-run
-npm publish --workspace=noised-ui --access public --tag beta --dry-run
-npm publish --workspace=noised-storm --access public --tag beta
-npm publish --workspace=noised-ui --access public --tag beta
-npm view noised-storm@beta version
-npm view noised-ui@beta version
+npm publish --workspace=storm-synth --access public --tag beta --dry-run
+npm publish --workspace=audio-ui-kit --access public --tag beta --dry-run
+npm publish --workspace=storm-synth --access public --tag beta
+npm publish --workspace=audio-ui-kit --access public --tag beta
+npm view storm-synth@beta version
+npm view audio-ui-kit@beta version
 ```
 
 Review the dry-run file lists: each package includes its README, license,
 manifest and built exports; Storm also includes the worklet and WASM. Complete
 the interactive authentication prompts. These unscoped names are always public.
-Use `npm install noised-storm@beta` or `npm install noised-ui@beta` in consuming
+Use `npm install storm-synth@beta` or `npm install audio-ui-kit@beta` in consuming
 projects; `beta` is intentionally separate from the default `latest` tag.
 
 For subsequent candidates, increment to `1.0.0-beta.2`, etc., update the demo's
@@ -101,7 +101,7 @@ ready for stable use, publish a new `1.0.0` version with `--tag latest` and upda
 after their first releases. Publishing is manual; the Pages workflow does not
 publish npm packages.
 
-After verifying both replacements, the old `noised` package can be deprecated
+After verifying both replacements, the old `audio` package can be deprecated
 with a migration message, or unpublished if npm's policy allows removal. For
 packages older than 72 hours, removal requires no registry dependents, fewer
 than 300 downloads in the last week, and a single owner/maintainer. See npm's
@@ -110,7 +110,7 @@ permanently removes installable versions; do not run it as part of normal releas
 
 ## GitHub Pages deployment
 
-Live demo: https://stargazingdave.github.io/noised-web/.
+Live demo: https://stargazingdave.github.io/audio-web/.
 
 The [Pages workflow](.github/workflows/deploy-pages.yml) deploys each push to
 `main` and supports manual runs from Actions. It installs locked npm dependencies
@@ -125,16 +125,16 @@ Vite receives `VITE_BASE_PATH` from Pages metadata. Development defaults to `/`.
 To check a production project path locally in PowerShell:
 
 ```powershell
-$env:VITE_BASE_PATH = '/noised-web/'
+$env:VITE_BASE_PATH = '/storm-synth-web/'
 npm run build
 npm run test:ui
 npm run preview
-# Open http://127.0.0.1:4173/noised-web/
+# Open http://127.0.0.1:4173/storm-synth-web/
 # After stopping preview:
 Remove-Item Env:VITE_BASE_PATH
 ```
 
-On POSIX shells, use `export VITE_BASE_PATH=/noised-web/` and unset it afterward.
+On POSIX shells, use `export VITE_BASE_PATH=/storm-synth-web/` and unset it afterward.
 Keep the same base path for build, browser check and preview. Logo, starfields,
 JS, CSS, WASM and AudioWorklet URLs respect the configured path.
 
@@ -148,6 +148,6 @@ npm run og:preview
 npm run og:generate
 ```
 
-Run these commands from the **noised-web workspace root**. `/?og=1` uses the actual demo, default preset, shared controller, WASM/worklet engine, and `noised-ui` visualization. Playwright clicks Play Storm and waits for running audio, nonzero analyser samples, and rendered canvas frames. Only the capture layout changes. Audio and the exact waveform remain naturally variable.
+Run these commands from the **audio-web workspace root**. `/?og=1` uses the actual demo, default preset, shared controller, WASM/worklet engine, and `audio-ui-kit` visualization. Playwright clicks Play Storm and waits for running audio, nonzero analyser samples, and rendered canvas frames. Only the capture layout changes. Audio and the exact waveform remain naturally variable.
 
 Generation writes `storm/demo/public/storm.png` (1200 × 630). Review and explicitly add the PNG and source changes to Git. It ships as a public static asset in the existing deployment; generation never runs during dev, build, CI, or deployment. Preview opens a visible browser; close its window or press Ctrl+C to clean up. Existing servers are reused and left running. If Web Audio needs a visible browser, set `browser.headed` to `true` and `browser.channel` to `"chrome"` in `og.config.json` (installed Chrome is already configured for visible previews on this machine).

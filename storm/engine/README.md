@@ -1,4 +1,4 @@
-# NoiseD Storm
+# Storm Synth
 
 Framework-independent procedural rain and thunder for browser ambience apps and games.
 This package owns audio synthesis and lifecycle, with no React, UI or CSS dependency.
@@ -10,20 +10,20 @@ the [demo README](../demo/README.md) for player tools, and the
 
 Release candidate: **1.0.0-beta.1**, intended for the `beta` tag. This is a 1.0
 API candidate; beta versions may still change the public API. See the
-[release procedure](https://github.com/stargazingdave/noised-web#publish-a-library-release)
+[release procedure](https://github.com/stargazingdave/audio-web#publish-a-library-release)
 for verification and publishing. The engine and UI have independent releases.
 
-Build a local tarball with `npm run pack:library` at the monorepo root, then install the resulting `artifacts/noised-storm-1.0.0-beta.1.tgz` in another project. After publication, use `npm install noised-storm@beta`.
+Build a local tarball with `npm run pack:library` at the monorepo root, then install the resulting `artifacts/storm-synth-storm-1.0.0-beta.1.tgz` in another project. After publication, use `npm install storm-synth@beta`.
 
 Initialize from a user interaction. With Vite, import the packaged assets as URLs:
 
 ```ts
-import { NoiseDStorm } from 'noised-storm';
-import workletUrl from 'noised-storm/rain.worklet.js?url';
-import wasmUrl from 'noised-storm/noised_dsp.wasm?url';
+import { StormSynth } from 'storm-synth';
+import workletUrl from 'storm-synth/rain.worklet.js?url';
+import wasmUrl from 'storm-synth/storm_synth_dsp.wasm?url';
 
 const ctx = new AudioContext();
-const storm = await NoiseDStorm.createWasm(ctx, {}, { workletUrl, wasmUrl });
+const storm = await StormSynth.createWasm(ctx, {}, { workletUrl, wasmUrl });
 await storm.start();
 storm.updateRainParams({ dropRate: 100, noiseFilterFreq: { value: 2500 } });
 storm.updateThunderParams({ volume: { value: 0.4 } });
@@ -32,12 +32,12 @@ storm.destroy();
 await ctx.close(); // The application owns its AudioContext.
 ```
 
-`NoiseDStorm` aliases `NoiseDController`. For rain alone, use `RainGenerator.createWasm(ctx, params, options)`, connect it to a destination, then await `start()`. Options also accept a repeatable rain `seed` and a fixed `maxVoices` pool of 1–256 (default 128). Thunder randomness is independent of the rain seed.
+`StormSynth` aliases `StormSynthController`. For rain alone, use `RainGenerator.createWasm(ctx, params, options)`, connect it to a destination, then await `start()`. Options also accept a repeatable rain `seed` and a fixed `maxVoices` pool of 1–256 (default 128). Thunder randomness is independent of the rain seed.
 
 Other bundlers can copy the worklet and WASM exports to their static asset directory and supply those URLs. Consumers need no Rust toolchain. Use HTTPS or localhost, allow the asset URLs in your CSP, and enable CORS for cross-origin assets. Initialization fails explicitly when assets or AudioWorklet are unavailable.
 
 The package exports ESM and CommonJS, TypeScript declarations, and these asset
-subpaths: `noised-storm/rain.worklet.js` and `noised-storm/noised_dsp.wasm`.
+subpaths: `storm-synth/rain.worklet.js` and `storm-synth/storm_synth_dsp.wasm`.
 The `?url` syntax in the example is Vite-specific, not part of the engine API.
 With another build tool, provide publicly fetchable URLs yourself; they must
 respect the deployed base path. WASM is compiled from an ArrayBuffer, so hosts
@@ -53,7 +53,7 @@ for the lifetime of a player instead of creating one for each UI component.
 
 | Method | Behavior |
 | --- | --- |
-| `NoiseDStorm.createWasm(ctx, params, options)` | Async factory; accepts nested partial parameters and caller-supplied asset URLs |
+| `StormSynth.createWasm(ctx, params, options)` | Async factory; accepts nested partial parameters and caller-supplied asset URLs |
 | `start()` | Async start/resume of enabled rain and thunder |
 | `stop()` | Stops playback and pending thunder scheduling without destroying the graph |
 | `startRain()` / `stopRain()` | Enables/starts or disables/stops rain; await rain startup |
@@ -71,13 +71,13 @@ for the lifetime of a player instead of creating one for each UI component.
 Master, rain and thunder EQs have ten bands: 31, 62, 125, 250, 500, 1000,
 2000, 4000, 8000 and 16000 Hz. Gain arrays are replaced as whole arrays in
 patches. Object patches preserve sibling values; use the exported
-`DeepPartial<NoiseDParams>` type for typed updates. Dedicated `setRain*` methods
+`DeepPartial<StormSynthParams>` type for typed updates. Dedicated `setRain*` methods
 also remain available; their declarations and parameter interfaces are in
-[NoiseDController.ts](src/NoiseDController.ts).
+[StormSynthController.ts](src/StormSynthController.ts).
 
 ### Parameters and modulation
 
-`NoiseDParams` contains `masterVolume`, `delayBetweenThunders`, `eqGains`,
+`StormSynthParams` contains `masterVolume`, `delayBetweenThunders`, `eqGains`,
 `rainParams` and `thunderParams`. The library's initial output gain is 0.5;
 both layers are enabled, and thunder intervals default to 5000-15000 ms.
 The demo uses its own saved presets, not these engine defaults.
@@ -101,7 +101,7 @@ file parsing and download UI. The engine does not provide preset storage.
 For a visualization, pass the analyser returned by `getAnalyser()` to any
 compatible renderer, including the UI library's `Visualization`. Keep analyser
 and playback state shared across the player's components. No CSS import is
-needed by this engine; UI styling belongs to `noised-ui`.
+needed by this engine; UI styling belongs to `audio-ui-kit`.
 
 `renderToFile` requires a finite positive duration and uses the rain backend
 chosen by the factory. It does not turn on live playback; enabled layers and
@@ -130,10 +130,10 @@ npm test
 npm run dev
 ```
 
-For this package alone, `npm run build --workspace=noised-storm` emits both JS
+For this package alone, `npm run build --workspace=storm-synth` emits both JS
 formats, declarations, the worklet and WASM binary; `npm run test
---workspace=noised-storm` also runs Rust tests. `npm run test:browser
---workspace=noised-storm` verifies browser audio and `npm run bench` at the root
+--workspace=storm-synth` also runs Rust tests. `npm run test:browser
+--workspace=storm-synth` verifies browser audio and `npm run bench` at the root
 runs the performance benchmark. The source build uses the committed Cargo.lock
 with `--locked`; the npm tarball contains prebuilt assets. Keep generated
 `dist` and Rust `target` directories out of Git.

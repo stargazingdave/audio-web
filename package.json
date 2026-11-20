@@ -1,5 +1,5 @@
 {
-  "name": "noised-web",
+  "name": "audio-web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,18 +9,18 @@
     "ui"
   ],
   "scripts": {
-    "build": "npm run build --workspace=noised-storm && npm run build --workspace=noised-ui && npm run build --workspace=@noised-storm/demo",
-    "dev": "npm run build --workspace=noised-storm && npm run build --workspace=noised-ui && npm run dev --workspace=@noised-storm/demo",
-    "preview": "npm run preview --workspace=@noised-storm/demo",
+    "build": "npm run build --workspace=storm-synth && npm run build --workspace=audio-ui-kit && npm run build --workspace=@storm-synth/demo",
+    "dev": "npm run build --workspace=storm-synth && npm run build --workspace=audio-ui-kit && npm run dev --workspace=@storm-synth/demo",
+    "preview": "npm run preview --workspace=@storm-synth/demo",
     "typecheck": "npm run typecheck --workspaces",
-    "test": "npm run test --workspace=noised-storm && npm run test --workspace=noised-ui && npm run test --workspace=@noised-storm/demo",
+    "test": "npm run test --workspace=storm-synth && npm run test --workspace=audio-ui-kit && npm run test --workspace=@storm-synth/demo",
     "check": "npm run build && npm run typecheck && npm test",
-    "pack:library": "npm pack --workspace=noised-storm --pack-destination=artifacts",
-    "bench": "npm run bench --workspace=noised-storm",
+    "pack:library": "npm pack --workspace=storm-synth --pack-destination=artifacts",
+    "bench": "npm run bench --workspace=storm-synth",
     "test:ui": "node scripts/ui-smoke.mjs",
     "test:package": "node scripts/package-smoke.mjs",
-    "dev:ui": "npm run dev --workspace=noised-ui",
-    "pack:ui": "npm pack --workspace=noised-ui --pack-destination=artifacts",
+    "dev:ui": "npm run dev --workspace=audio-ui-kit",
+    "pack:ui": "npm pack --workspace=audio-ui-kit --pack-destination=artifacts",
     "og:generate": "og-capture generate --config og.config.json",
     "og:preview": "og-capture preview --config og.config.json"
   },

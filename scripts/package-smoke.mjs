@@ -8,7 +8,7 @@ import { createRequire } from 'node:module';
 import { build, preview } from 'vite';
 
 const require = createRequire(import.meta.url);
-const { chromium } = require(process.env.NOISED_PLAYWRIGHT_PATH || 'playwright');
+const { chromium } = require(process.env.AUDIO_PLAYWRIGHT_PATH || 'playwright');
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 if (!process.env.npm_execpath) throw new Error('Run npm run test:package');
@@ -22,45 +22,45 @@ const stormManifest = JSON.parse(await readFile(path.join(root, 'storm/engine/pa
 const uiManifest = JSON.parse(await readFile(path.join(root, 'ui/package.json'), 'utf8'));
 const tarball = path.join(root, 'artifacts', `${stormManifest.name}-${stormManifest.version}.tgz`);
 const uiTarball = path.join(root, 'artifacts', `${uiManifest.name}-${uiManifest.version}.tgz`);
-const consumer = await mkdtemp(path.join(tmpdir(), 'noised-storm-consumer-'));
+const consumer = await mkdtemp(path.join(tmpdir(), 'storm-synth-consumer-'));
 await writeFile(path.join(consumer, 'package.json'), JSON.stringify({ name: 'standalone-storm-consumer', version: '1.0.0', private: true, type: 'module' }));
 const demo = JSON.parse(await readFile(path.join(root, 'storm/demo/package.json'), 'utf8'));
 const installation = spawnSync(process.execPath, [process.env.npm_execpath, 'install', '--ignore-scripts', '--no-audit', '--no-fund',
     tarball, uiTarball, `react@${demo.dependencies.react}`, `react-dom@${demo.dependencies['react-dom']}`,
     `@types/react@${demo.devDependencies['@types/react']}`, `@types/react-dom@${demo.devDependencies['@types/react-dom']}`], { cwd: consumer, stdio: 'inherit' });
 if (installation.status !== 0) throw new Error('Standalone package installation failed');
-assert.equal((await lstat(path.join(consumer, 'node_modules/noised-storm'))).isSymbolicLink(), false);
-assert.equal((await lstat(path.join(consumer, 'node_modules/noised-ui'))).isSymbolicLink(), false);
+assert.equal((await lstat(path.join(consumer, 'node_modules/storm-synth'))).isSymbolicLink(), false);
+assert.equal((await lstat(path.join(consumer, 'node_modules/audio-ui-kit'))).isSymbolicLink(), false);
 const result = spawnSync(process.execPath, ['--input-type=module', '-e', `
-import { NoiseDStorm, NoiseDController, RainGenerator } from 'noised-storm';
+import { StormSynth, StormSynthController, RainGenerator } from 'storm-synth';
 import { createRequire } from 'node:module';
 import { readFileSync } from 'node:fs';
 const require = createRequire(import.meta.url);
-if (NoiseDStorm !== NoiseDController || typeof RainGenerator !== 'function' || typeof require('noised-storm').NoiseDStorm !== 'function') throw new Error('Invalid package API');
-await WebAssembly.compile(readFileSync(require.resolve('noised-storm/noised_dsp.wasm')));
-if (!readFileSync(require.resolve('noised-storm/rain.worklet.js'), 'utf8').includes('registerProcessor')) throw new Error('Missing standalone worklet');
+if (StormSynth !== StormSynthController || typeof RainGenerator !== 'function' || typeof require('storm-synth').StormSynth !== 'function') throw new Error('Invalid package API');
+await WebAssembly.compile(readFileSync(require.resolve('storm-synth/storm_synth_dsp.wasm')));
+if (!readFileSync(require.resolve('storm-synth/rain.worklet.js'), 'utf8').includes('registerProcessor')) throw new Error('Missing standalone worklet');
 console.log('Standalone package installed successfully: ESM, CommonJS, declarations, WASM and worklet assets.');
-const { Knob, Equalizer, AmpToggleSwitch, Visualization } = await import('noised-ui');
+const { Knob, Equalizer, AmpToggleSwitch, Visualization } = await import('audio-ui-kit');
 const { createElement } = await import('react');
 const { renderToStaticMarkup } = await import('react-dom/server');
 for (const [component, props] of [[Knob, { value: 0, onChange() {} }], [Equalizer, { gains: [0], freqs: [100], onChange() {} }], [AmpToggleSwitch, { checked: false, onChange() {} }], [Visualization, { analyser: null, isPlaying: false }]]) {
     if (!renderToStaticMarkup(createElement(component, props)).length) throw new Error('UI SSR failed');
 }
-if (typeof require('noised-ui').Knob !== 'function') throw new Error('Missing UI CommonJS export');
-if (typeof require('noised-ui').Visualization !== 'function') throw new Error('Missing Visualization CommonJS export');
-const unstyled = await import('noised-ui/unstyled');
-if (typeof unstyled.Equalizer !== 'function' || typeof require('noised-ui/unstyled').Knob !== 'function') throw new Error('Missing explicit-style UI exports');
-if (!readFileSync(require.resolve('noised-ui/styles.css'), 'utf8').includes('.noised-knob')) throw new Error('Missing UI CSS export');
+if (typeof require('audio-ui-kit').Knob !== 'function') throw new Error('Missing UI CommonJS export');
+if (typeof require('audio-ui-kit').Visualization !== 'function') throw new Error('Missing Visualization CommonJS export');
+const unstyled = await import('audio-ui-kit/unstyled');
+if (typeof unstyled.Equalizer !== 'function' || typeof require('audio-ui-kit/unstyled').Knob !== 'function') throw new Error('Missing explicit-style UI exports');
+if (!readFileSync(require.resolve('audio-ui-kit/styles.css'), 'utf8').includes('.audio-knob')) throw new Error('Missing UI CSS export');
 `], { cwd: consumer, stdio: 'inherit' });
 if (result.status !== 0) throw new Error('Standalone consumer check failed');
 
 // Exercise automatic styles without importing CSS, outside Storm and the workspace.
-await writeFile(path.join(consumer, 'index.html'), '<!doctype html><html><head><title>NoiseD UI consumer</title><style>.noised-knob { font-family: consumer-override; }</style></head><body><div id="root"></div><script type="module" src="/main.tsx"></script></body></html>');
+await writeFile(path.join(consumer, 'index.html'), '<!doctype html><html><head><title>Audio UI Kit consumer</title><style>.audio-knob { font-family: consumer-override; }</style></head><body><div id="root"></div><script type="module" src="/main.tsx"></script></body></html>');
 await writeFile(path.join(consumer, 'main.tsx'), `
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Knob, Equalizer, AmpToggleSwitch, Visualization, type KnobProps, type VisualizationProps, type VisualizationStyle } from 'noised-ui';
-import type { KnobProps as ExplicitKnobProps } from 'noised-ui/unstyled';
+import { Knob, Equalizer, AmpToggleSwitch, Visualization, type KnobProps, type VisualizationProps, type VisualizationStyle } from 'audio-ui-kit';
+import type { KnobProps as ExplicitKnobProps } from 'audio-ui-kit/unstyled';
 function App() {
     const [gain, setGain] = useState(0);
     const [gains, setGains] = useState([0, 0, 0]);
@@ -90,18 +90,18 @@ await writeFile(path.join(consumer, 'explicit.html'), '<!doctype html><html><hea
 await writeFile(path.join(consumer, 'explicit.tsx'), `
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { Knob } from 'noised-ui/unstyled';
-import 'noised-ui/styles.css';
+import { Knob } from 'audio-ui-kit/unstyled';
+import 'audio-ui-kit/styles.css';
 createRoot(document.getElementById('root')!).render(<Knob label="Explicit gain" value={0} onChange={() => {}} />);
 `);
-await writeFile(path.join(consumer, 'types.cts'), `import { Knob, type KnobProps } from 'noised-ui';
+await writeFile(path.join(consumer, 'types.cts'), `import { Knob, type KnobProps } from 'audio-ui-kit';
 const props: KnobProps = { value: 0, onChange(value: number) {} }; void Knob; void props;
-import { Visualization, type VisualizationProps } from 'noised-ui';
+import { Visualization, type VisualizationProps } from 'audio-ui-kit';
 const visualization: VisualizationProps = { analyser: null, isPlaying: false }; void Visualization; void visualization;
-import { Equalizer as ExplicitEqualizer, type EqualizerProps } from 'noised-ui/unstyled';
+import { Equalizer as ExplicitEqualizer, type EqualizerProps } from 'audio-ui-kit/unstyled';
 const eq: EqualizerProps = { gains: [0], freqs: [1000], onChange() {} }; void ExplicitEqualizer; void eq;
-import { NoiseDStorm, type NoiseDParams, type DeepPartial } from 'noised-storm';
-const stormParams: DeepPartial<NoiseDParams> = { masterVolume: 0.5 }; void NoiseDStorm; void stormParams;
+import { StormSynth, type StormSynthParams, type DeepPartial } from 'storm-synth';
+const stormParams: DeepPartial<StormSynthParams> = { masterVolume: 0.5 }; void StormSynth; void stormParams;
 `);
 const compiler = require.resolve('typescript/bin/tsc');
 for (const [module, resolution, file] of [['ESNext', 'bundler', 'main.tsx'], ['NodeNext', 'NodeNext', 'types.cts']]) {
@@ -115,12 +115,12 @@ await build({ root: consumer, configFile: false, logLevel: 'warn', build: {
 const server = await preview({ root: consumer, configFile: false, logLevel: 'warn', preview: { host: '127.0.0.1', port: 0 } });
 let browser;
 try {
-    browser = await chromium.launch({ channel: process.env.NOISED_BROWSER_CHANNEL || 'chrome', headless: true });
+    browser = await chromium.launch({ channel: process.env.AUDIO_BROWSER_CHANNEL || 'chrome', headless: true });
     const page = await browser.newPage({ viewport: { width: 800, height: 700 } });
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(`http://127.0.0.1:${server.httpServer.address().port}`);
-    assert.equal(await page.locator('style[data-noised-ui]').count(), 1, 'Automatic styles were lost during production bundling');
+    assert.equal(await page.locator('style[data-audio-ui-kit]').count(), 1, 'Automatic styles were lost during production bundling');
     const knob = page.getByRole('slider', { name: 'Gain', exact: true });
     await knob.press('ArrowUp');
     assert.equal(await knob.getAttribute('aria-valuenow'), '0.5');
@@ -146,7 +146,7 @@ try {
     await defaultEq.getByRole('button', { name: 'Reset all bands to 0 dB', exact: true }).click();
     assert.ok(await defaultEq.getByRole('slider').evaluateAll(bands => bands.every(band => band.getAttribute('aria-valuenow') === '0')));
     const compact = page.getByRole('region', { name: 'Compact EQ' });
-    assert.equal((await compact.locator('.noised-equalizer').boundingBox()).height, 128);
+    assert.equal((await compact.locator('.audio-equalizer').boundingBox()).height, 128);
     assert.equal((await page.getByRole('slider', { name: 'Compact gain', exact: true }).boundingBox()).width, 64);
     assert.equal(await compact.getByRole('slider').count(), 10);
     const compactBand = compact.getByRole('slider', { name: 'Gain at 1.0k', exact: true });
@@ -165,10 +165,10 @@ try {
     await page.mouse.down();
     await page.mouse.up();
     assert.ok(Math.abs(Number(await compactBand.getAttribute('aria-valuenow')) - 6) <= 0.2);
-    assert.ok(await compactBand.locator('.noised-equalizer__readout').isVisible());
+    assert.ok(await compactBand.locator('.audio-equalizer__readout').isVisible());
     const alignment = await compact.evaluate(section => {
-        const sliders = [...section.querySelectorAll('.noised-equalizer__slider')];
-        const labels = [...section.querySelectorAll('.noised-equalizer__frequency')];
+        const sliders = [...section.querySelectorAll('.audio-equalizer__slider')];
+        const labels = [...section.querySelectorAll('.audio-equalizer__frequency')];
         return sliders.every((slider, index) => {
             const a = slider.getBoundingClientRect();
             const b = labels[index].getBoundingClientRect();
@@ -177,46 +177,46 @@ try {
     });
     assert.ok(alignment, 'Frequency labels do not align with their faders');
     assert.ok(await compact.evaluate(section => {
-        const plot = section.querySelector('.noised-equalizer__plot').getBoundingClientRect();
+        const plot = section.querySelector('.audio-equalizer__plot').getBoundingClientRect();
         const background = section.querySelector('[data-testid="bars-background"]').getBoundingClientRect();
-        const labels = section.querySelector('.noised-equalizer__frequencies').getBoundingClientRect();
+        const labels = section.querySelector('.audio-equalizer__frequencies').getBoundingClientRect();
         return background.x === plot.x && background.y === plot.y && background.width === plot.width
             && background.height === plot.height && background.bottom <= labels.top;
     }), 'EQ background extends outside its bars area');
     await compact.evaluate(section => { section.style.width = '240px'; });
-    await compact.locator('.noised-equalizer__scale').waitFor({ state: 'detached' });
+    await compact.locator('.audio-equalizer__scale').waitFor({ state: 'detached' });
     assert.ok(await compact.evaluate(section => section.scrollWidth <= section.clientWidth));
     await compact.evaluate(section => { section.style.width = '300px'; });
-    await compact.locator('.noised-equalizer__scale').waitFor();
+    await compact.locator('.audio-equalizer__scale').waitFor();
     await compact.getByRole('button', { name: 'Reset all bands to 0 dB', exact: true }).click();
     assert.ok(await compact.getByRole('slider').evaluateAll(bands => bands.every(band => band.getAttribute('aria-valuenow') === '0')));
     assert.ok(await compact.getByRole('button', { name: 'Reset all bands to 0 dB', exact: true }).isDisabled());
     const visualization = page.getByRole('img', { name: 'Standalone visualization', exact: true });
     assert.equal((await visualization.boundingBox()).height, 80);
     assert.equal(await visualization.getAttribute('data-style'), 'valve');
-    await page.waitForFunction(() => document.querySelector('.noised-visualization__canvas').width === 300);
+    await page.waitForFunction(() => document.querySelector('.audio-visualization__canvas').width === 300);
     const toggle = page.getByRole('switch', { name: 'Enabled' });
     await toggle.press('Space');
     assert.equal(await toggle.getAttribute('aria-checked'), 'false');
     assert.equal(await knob.getAttribute('aria-disabled'), 'true');
     assert.equal(await input.isDisabled(), true);
     const styles = await page.evaluate(() => ({
-        display: getComputedStyle(document.querySelector('.noised-knob')).display,
-        switchWidth: document.querySelector('.noised-switch__button').getBoundingClientRect().width,
+        display: getComputedStyle(document.querySelector('.audio-knob')).display,
+        switchWidth: document.querySelector('.audio-switch__button').getBoundingClientRect().width,
         bodyMargin: getComputedStyle(document.body).margin,
-        knobFont: getComputedStyle(document.querySelector('.noised-knob')).fontFamily,
+        knobFont: getComputedStyle(document.querySelector('.audio-knob')).fontFamily,
     }));
     assert.equal(styles.display, 'flex');
     assert.equal(styles.switchWidth, 24);
     assert.equal(styles.bodyMargin, '8px'); // The library must not reset the host page.
     assert.equal(styles.knobFont, 'consumer-override', 'Automatic styles override host CSS');
-    assert.equal(await page.locator('style[data-noised-ui]').count(), 1);
+    assert.equal(await page.locator('style[data-audio-ui-kit]').count(), 1);
     await mkdir(path.join(root, 'artifacts'), { recursive: true });
     await page.screenshot({ path: path.join(root, 'artifacts/ui-standalone.png'), fullPage: true });
     await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/explicit.html`);
     await page.getByRole('slider', { name: 'Explicit gain', exact: true }).waitFor();
-    assert.equal(await page.locator('style[data-noised-ui]').count(), 0);
-    assert.equal(await page.locator('.noised-knob').evaluate(el => getComputedStyle(el).display), 'flex');
+    assert.equal(await page.locator('style[data-audio-ui-kit]').count(), 0);
+    assert.equal(await page.locator('.audio-knob').evaluate(el => getComputedStyle(el).display), 'flex');
     assert.deepEqual(errors, []);
     console.log('Standalone UI passed: ESM/CommonJS, both declaration formats, scoped CSS, pointer/keyboard controls, disabled state and SSR.');
 } finally {
