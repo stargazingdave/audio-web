@@ -38,3 +38,7 @@ controller.destroy();
 The original JavaScript-only experiment is preserved separately in [storm-synth-legacy](https://github.com/stargazingdave/storm-synth-legacy). Its old package is not a drop-in API replacement for the current Rust/WebAssembly engine.
 
 The native products are NoteGrip and Moddable Rig, by David Portal. Their VST class IDs, parameter IDs, and state formats are retained. Historical release filenames, storage keys, tags, and frozen reference archives remain intact so existing downloads and regression checks continue to work.
+
+Before installing a renamed VST3 bundle, close the DAW and move its previous branded bundle outside plugin scan folders. Installing both names together creates duplicate VST class IDs. Keep backups outside scan folders.
+
+Tuner is now served from `https://stargazingdave.github.io/tuner/`. Existing PWA installations tied to the previous repository URL should be reinstalled from the new address.
